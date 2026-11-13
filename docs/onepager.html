@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@page{size:A4;margin:14mm}
+body{font:11pt/1.45 'Instrument Sans','Helvetica',sans-serif;color:#14231D;margin:0}
+h1{font:700 30pt/1 Georgia,serif;margin:0 0 4px;letter-spacing:-.02em} h1 em{color:#D9482B;font-weight:400}
+.sub{color:#4A5A52;margin:0 0 12px;font-size:11.5pt}
+h2{font:600 9pt monospace;letter-spacing:.1em;text-transform:uppercase;color:#1F5C4A;margin:12px 0 4px}
+.cols{display:flex;gap:14px} .cols>div{flex:1}
+img{width:100%;border:1px solid #DDD3BF;border-radius:8px}
+li{margin:2px 0} ul{margin:0;padding-left:16px}
+.box{background:#DCE8DF;border-radius:8px;padding:8px 10px;font-size:10pt}
+.foot{margin-top:10px;font-size:8.5pt;color:#4A5A52;border-top:1px solid #DDD3BF;padding-top:6px}
+</style></head><body>
+<h1>MedMerge — <em>one safe list.</em></h1>
+<p class="sub">DSH Hacks V2 · AI × Healthcare · Demo: shahriarsharif406.github.io/medmerge · Code: github.com/shahriarsharif406/medmerge</p>
+<div class="cols"><div>
+<h2>The problem</h2>
+<p>In Bangladesh one medicine is sold under dozens of brand names — Napa and Ace are both paracetamol, Seclo and Losectil both omeprazole. Patients who see several doctors collect several prescriptions, and a double dose can hide behind two different names. Nobody reads them side by side.</p>
+<h2>What MedMerge does</h2>
+<ul><li>Reads prescriptions (typed, or a photo via Gemini)</li>
+<li>Turns every brand into its active ingredient (12,000+ Bangladeshi brands)</li>
+<li>Merges them into one list and flags: same medicine under two names, hidden overlap inside combinations, same-family pairs, label-listed interactions</li>
+<li>Writes the questions to ask the doctor — in English and Bangla</li></ul>
+<h2>Why it is different</h2>
+<p>Existing tools check interactions in US/EU hospital records. MedMerge targets the Bangladeshi brand maze, works from a patient's phone, and runs entirely in the browser — no server, no stored data.</p>
+<div class="box"><b>Built to be safe:</b> it never says "stop"; it says "ask". Every scanned line is shown for confirmation. Not medical advice; interaction text is quoted from label summaries and not clinically validated.</div>
+</div><div>
+<img src="screenshot-result.png" style="max-height:150mm;object-fit:cover;object-position:top">
+</div></div>
+<h2>How it is built</h2>
+<p>Pure JavaScript engine (parser → brand/generic resolver with fuzzy matching → ingredient, class and label-text comparison), unit-tested in Node. Data: wsayan/medicinedb (MIT). Optional Gemini 2.5 Flash vision for photos using the user's own key. GitHub Pages hosting.</p>
+<p class="foot">Built by Shahariar · Anvia Labs · MIT licence</p>
+</body></html>

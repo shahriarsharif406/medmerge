@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedMerge — one safe medicine list from every prescription</title>
+<meta name="description" content="MedMerge merges prescriptions from different doctors into one list and flags double doses hiding behind different Bangladeshi brand names.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Hind+Siliguri:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#" aria-label="MedMerge">
+    <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true">
+      <rect x="2" y="2" width="36" height="36" rx="9" fill="#14231D"/>
+      <circle cx="13" cy="14" r="4.2" fill="#F6F1E7"/><circle cx="27" cy="14" r="4.2" fill="#F6F1E7"/>
+      <circle cx="13" cy="26" r="4.2" fill="#F6F1E7"/><circle cx="27" cy="26" r="4.2" fill="#D9482B"/>
+    </svg>
+    <span>MedMerge</span>
+  </a>
+  <nav>
+    <button class="ghost" id="keyBtn" data-i18n="settings">Scan settings</button>
+    <div class="lang" role="group" aria-label="Language">
+      <button data-lang="en" class="on">EN</button><button data-lang="bn">বাংলা</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow" data-i18n="eyebrow">AI × Healthcare · Medication safety</p>
+    <h1 data-i18n="h1">Three doctors.<br><em>One safe list.</em></h1>
+    <p class="lede" data-i18n="lede">In Bangladesh the same medicine sells under dozens of brand names. When prescriptions from different doctors pile up, a double dose can hide behind two different names. MedMerge reads them all, merges them, and shows what needs a second look.</p>
+    <div class="samples" id="samples"></div>
+  </section>
+
+  <section class="bench" id="bench" aria-live="polite">
+    <div class="bench-head">
+      <h2 data-i18n="step1">1 · Your prescriptions</h2>
+      <div class="actions">
+        <label class="btn" for="photo"><span data-i18n="scan">Scan a photo</span></label>
+        <input type="file" id="photo" accept="image/*" hidden>
+        <button class="btn" id="addRx" data-i18n="addRx">+ Add prescription</button>
+        <button class="btn ghost" id="clearAll" data-i18n="clear">Clear</button>
+      </div>
+    </div>
+    <p class="hint" data-i18n="hint">One medicine per line. Brand or generic name, strength optional. Example: <code>Tab. Napa 500 mg 1+1+1</code></p>
+    <div class="rx-lane" id="lane"></div>
+    <p class="status" id="scanStatus" role="status"></p>
+  </section>
+
+  <section class="result" id="result" hidden>
+    <div class="verdict" id="verdict"></div>
+    <div class="cols">
+      <div>
+        <h2 data-i18n="step2">2 · What needs a second look</h2>
+        <div id="findings"></div>
+      </div>
+      <div>
+        <h2 data-i18n="step3">3 · Your merged list</h2>
+        <div id="merged"></div>
+        <div id="unknown"></div>
+        <div class="doc-q" id="docq"></div>
+        <button class="btn solid" id="print" data-i18n="print">Save / print this list</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p data-i18n="disclaimer"><strong>Not medical advice.</strong> MedMerge is a decision-support prototype built for a hackathon. Never stop or change a medicine because of this page — show the list to your doctor or pharmacist. In an emergency call 999.</p>
+  <p class="small" id="credit">Brand and label data: <a href="https://github.com/wsayan/medicinedb">wsayan/medicinedb</a> (MIT), compiled from public Bangladeshi drug-index data. Interaction wording comes from those label summaries and has not been clinically validated.</p>
+</footer>
+
+<dialog id="keyDlg">
+  <form method="dialog">
+    <h3 data-i18n="keyTitle">Scan settings</h3>
+    <p data-i18n="keyText">Photo scanning uses Google Gemini from your browser. Paste your own API key; it stays on this device and is sent only to Google. No key? Type the names or use a sample.</p>
+    <input id="keyInput" type="password" placeholder="Gemini API key" autocomplete="off">
+    <menu><button value="cancel" class="btn ghost" data-i18n="cancel">Cancel</button><button value="save" class="btn solid" id="saveKey" data-i18n="save">Save</button></menu>
+  </form>
+</dialog>
+<script type="module" src="app.js"></script>
+</body>
+</html>

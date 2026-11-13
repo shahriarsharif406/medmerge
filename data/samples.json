@@ -1,0 +1,37 @@
+{
+  "samples": [
+    {
+      "id": "rahima",
+      "title": { "en": "Rahima Begum, 68 — three doctors, one month", "bn": "রহিমা বেগম, ৬৮ — একমাসে তিনজন ডাক্তার" },
+      "note": { "en": "Synthetic sample for demonstration. Not a real patient.", "bn": "ডেমোর জন্য বানানো নমুনা। আসল রোগী নয়।" },
+      "prescriptions": [
+        { "doctor": "Medicine specialist", "place": "Chattogram Medical", "date": "02 Nov",
+          "items": ["Tab. Napa 500 mg 1+1+1", "Cap. Seclo 20 mg 1+0+1", "Tab. Amlovas 5 mg 0+0+1", "Tab. Ecosprin 75 mg 0+1+0"] },
+        { "doctor": "Orthopaedic", "place": "Private chamber", "date": "09 Nov",
+          "items": ["Tab. Flexi 100 mg 1+0+1", "Cap. Maxpro 20 mg 1+0+1", "Tab. Napa Extra 1+1+1"] },
+        { "doctor": "Cardiologist", "place": "Heart clinic", "date": "12 Nov",
+          "items": ["Tab. Ace 500 mg 1+0+1", "Tab. Plavix 75 mg 0+1+0", "Cap. Losectil 20 mg 1+0+0"] }
+      ]
+    },
+    {
+      "id": "karim",
+      "title": { "en": "Abdul Karim, 54 — diabetes and pain", "bn": "আবদুল করিম, ৫৪ — ডায়াবেটিস ও ব্যথা" },
+      "note": { "en": "Synthetic sample for demonstration. Not a real patient.", "bn": "ডেমোর জন্য বানানো নমুনা। আসল রোগী নয়।" },
+      "prescriptions": [
+        { "doctor": "Diabetologist", "place": "Diabetic clinic", "date": "05 Nov",
+          "items": ["Tab. Comet 500 mg 1+0+1", "Tab. Atova 10 mg 0+0+1"] },
+        { "doctor": "General physician", "place": "Local chamber", "date": "11 Nov",
+          "items": ["Tab. Voltalin 50 mg 1+0+1", "Tab. Tory 90 mg 0+1+0", "Tab. Alatrol 10 mg 0+0+1"] }
+      ]
+    },
+    {
+      "id": "clean",
+      "title": { "en": "Nusrat, 29 — a clean list", "bn": "নুসরাত, ২৯ — নিরাপদ তালিকা" },
+      "note": { "en": "Synthetic sample: what a safe list looks like.", "bn": "নমুনা: নিরাপদ তালিকা কেমন দেখায়।" },
+      "prescriptions": [
+        { "doctor": "General physician", "place": "Clinic", "date": "10 Nov",
+          "items": ["Tab. Napa 500 mg 1+1+1", "Tab. Alatrol 10 mg 0+0+1", "Tab. Ceevit 250 mg 1+0+0"] }
+      ]
+    }
+  ]
+}
