@@ -109,3 +109,19 @@ dialog .btn.ghost{color:var(--ink)}
   .verdict{border-width:1px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.patient{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin:6px 0 10px;font-size:14px;opacity:.95}
+.patient input[type=number]{width:70px;padding:6px 8px;border-radius:8px;border:1px solid #fff3;background:#0003;color:inherit;font:inherit}
+.patient .ck{display:flex;gap:6px;align-items:center}
+.meter{margin:0 0 18px;padding:14px 16px;border-radius:14px;background:var(--paper,#F6F1E7);color:#14231D;border:1px solid #14231D22}
+.meter .mh{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px}
+.meter .bar{height:12px;border-radius:99px;background:#14231D14;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:#1F5C4A;border-radius:99px;transition:width .6s}
+.meter.near .bar i{background:#D9A12B}.meter.over .bar i{background:#D9482B}.meter.over .mh span{color:#D9482B;font-weight:700}
+.mrows{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:13px}.mrows em{font-style:normal;opacity:.6;font-family:'IBM Plex Mono',monospace}
+.meter small{display:block;margin-top:6px;opacity:.6}
+.sched{margin:18px 0}.sched h4{margin:0 0 8px}
+.tt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tt>div{background:#ffffff0d;border:1px solid #fff2;border-radius:12px;padding:10px}
+.tt .th{font-weight:700;font-size:13px;margin-bottom:6px;display:flex;gap:6px}.tt p{margin:3px 0;font-size:13px}.tt .none{opacity:.4}
+@media print{.patient,#listen{display:none}.tt>div{border-color:#999;background:none}}

@@ -28,3 +28,10 @@ Clinical validation with pharmacists, dose and age checks, offline mobile app, a
 **Try it:** https://shahriarsharif406.github.io/medmerge/
 **Code:** https://github.com/shahriarsharif406/medmerge
 **Not medical advice.** Prototype; interaction text is not clinically validated.
+
+
+## Also in this version
+- **Paracetamol meter**: adds up every paracetamol-containing brand across all prescriptions (1+1+1 style schedules) and shows the day's total against the 4,000 mg limit (3,000 mg at 65+).
+- **Patient checks**: enter an age and a pregnancy flag to get label-based pregnancy-category (D/X) and 65+ NSAID/benzodiazepine cautions.
+- **Daily timetable**: morning / noon / night grid built from the merged list.
+- **Read aloud** in Bangla or English for patients who cannot read the screen easily.

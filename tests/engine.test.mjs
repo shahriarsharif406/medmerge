@@ -40,3 +40,16 @@ console.log('clean', r3.counts, r3.findings.map((f) => `${f.type}/${f.level}`));
 assert.equal(r3.level, 'ok');
 console.log('ALL OK');
 for (const f of r1.findings.filter((f) => f.type === 'INTERACTION')) console.log(r1.items[f.items[0]].display, '+', r1.items[f.items[1]].display, f.severity, '|', f.snippet);
+
+// --- v2: dose meter, schedule, pregnancy, age
+const rr = reconcile(idx, samples[0].prescriptions, { age: 68 });
+assert.ok(rr.meter && rr.meter.total >= 3500, 'paracetamol total ' + (rr.meter && rr.meter.total));
+assert.equal(rr.meter.limit, 3000);
+assert.ok(rr.findings.some((f) => f.type === 'DOSE'));
+assert.ok(rr.findings.some((f) => f.type === 'ELDER_NSAID'), 'Flexi in a 68-year-old');
+assert.equal(rr.schedule.slots.length, 3);
+const pg = reconcile(idx, [{ items: ['Tab. Atova 10 mg 0+0+1', 'Tab. Napa 500 mg 1+0+1'] }], { pregnant: true });
+console.log('pregnancy', pg.findings.map((f) => f.type + ' ' + (f.cat || '')));
+assert.ok(pg.findings.some((f) => f.type === 'PREGNANCY'), 'atorvastatin in pregnancy');
+assert.ok(!reconcile(idx, samples[2].prescriptions, { age: 29 }).findings.length, 'clean list stays clean');
+console.log('V2 OK', rr.meter.total, rr.meter.rows.map((r) => r.name + ':' + r.mg));

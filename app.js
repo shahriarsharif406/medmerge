@@ -25,6 +25,12 @@ const T = {
     CLASS_DUP: ['Same family, taken together', (l, g) => `${l} are all ${g}. Doctors rarely intend more than one at once.`],
     SAME_BRAND: ['Repeated across prescriptions', (l, g) => `${l} (${g}) appears on more than one prescription. Make sure it is taken only once.`],
     INTERACTION: ['Possible interaction', (a, b) => `${a} and ${b} may affect each other.`],
+    DOSE: ['Daily paracetamol limit reached', (l, g, f) => `${l} add up to about <b>${f.total} mg</b> of paracetamol a day. The usual adult ceiling is ${f.limit} mg.`],
+    PREGNANCY: ['Not advised in pregnancy', (l, g, f) => `${l} is rated category <b>${f.cat}</b> for pregnancy on its label summary.`],
+    ELDER_NSAID: ['Use with care at 65+', (l) => `${l} is an NSAID painkiller. In older adults it raises the risk of stomach bleeding and kidney strain.`],
+    ELDER_BZD: ['Use with care at 65+', (l) => `${l} is a benzodiazepine. In older adults it raises the risk of drowsiness and falls.`],
+    patient: 'About the patient', age: 'Age', preg: 'Pregnant', meterT: 'Paracetamol today', meterOf: (a, b) => `${a} of ${b} mg`, assumed: 'assumed 500 mg per tablet',
+    sched: 'Daily timetable', morning: 'Morning', noon: 'Noon', night: 'Night', asNeeded: 'As needed / no schedule', listen: 'Read aloud',
     and: ' and ', more: (m) => `Plus ${m} more to ask your doctor about.`,
     source: 'From the drug label summary:',
     groups: { NSAID: 'painkillers of the NSAID type', PPI: 'acid-reducing PPIs', H2: 'H2 acid reducers', STATIN: 'statins', ACEI: 'ACE inhibitors', ARB: 'ARB blood-pressure medicines', CCB: 'calcium-channel blockers', SSRI: 'SSRI antidepressants', BZD: 'benzodiazepines', OPIOID: 'opioids', SU: 'sulfonylurea diabetes medicines', ANTIHIST: 'antihistamines', FLUOROQ: 'quinolone antibiotics', MACROLIDE: 'macrolide antibiotics', TRICYC: 'tricyclic antidepressants' },
@@ -34,6 +40,10 @@ const T = {
       SAME_GENERIC: (l) => `Do I need all of ${l}, or only one?`,
       OVERLAP: (l) => `${l} overlap — which should I keep?`,
       CLASS_DUP: (l) => `Is it intended that I take ${l} together?`,
+      DOSE: (l) => `Is my total paracetamol across ${l} safe?`,
+      PREGNANCY: (l) => `Is ${l} safe while I am pregnant?`,
+      ELDER_NSAID: (l) => `Is ${l} safe at my age, or is there a gentler option?`,
+      ELDER_BZD: (l) => `Is ${l} still the right choice at my age?`,
       SAME_BRAND: (l) => `${l} is on two prescriptions — is one a repeat?`,
       INTERACTION: (a, b) => `Is it safe to take ${a} with ${b}?`,
     },
@@ -63,6 +73,12 @@ const T = {
     CLASS_DUP: ['একই গোত্রের ওষুধ একসাথে', (l, g) => `${l} — সবই একই গোত্রের (${g})। ডাক্তাররা সাধারণত একাধিক একসাথে চান না।`],
     SAME_BRAND: ['একাধিক প্রেসক্রিপশনে একই ওষুধ', (l, g) => `${l} (${g}) একাধিক প্রেসক্রিপশনে আছে। নিশ্চিত করুন এটি একবারই খাচ্ছেন।`],
     INTERACTION: ['সম্ভাব্য মিথস্ক্রিয়া', (a, b) => `${a} ও ${b} একে অপরের কাজে প্রভাব ফেলতে পারে।`],
+    DOSE: ['প্যারাসিটামলের দৈনিক সীমা ছুঁয়েছে', (l, g, f) => `${l} মিলিয়ে দিনে প্রায় <b>${f.total} মিগ্রা</b> প্যারাসিটামল হচ্ছে। সাধারণ প্রাপ্তবয়স্কের সর্বোচ্চ সীমা ${f.limit} মিগ্রা।`],
+    PREGNANCY: ['গর্ভাবস্থায় নিরাপদ নয়', (l, g, f) => `${l} ওষুধটির লেবেলে গর্ভাবস্থার ক্যাটাগরি <b>${f.cat}</b>।`],
+    ELDER_NSAID: ['৬৫+ বয়সে সতর্কতা', (l) => `${l} একটি NSAID ব্যথানাশক। বয়স্কদের পাকস্থলীতে রক্তক্ষরণ ও কিডনির ঝুঁকি বাড়ায়।`],
+    ELDER_BZD: ['৬৫+ বয়সে সতর্কতা', (l) => `${l} একটি বেনজোডায়াজেপিন। বয়স্কদের ঝিমুনি ও পড়ে যাওয়ার ঝুঁকি বাড়ায়।`],
+    patient: 'রোগীর তথ্য', age: 'বয়স', preg: 'গর্ভবতী', meterT: 'আজকের প্যারাসিটামল', meterOf: (a, b) => `${b} এর মধ্যে ${a} মিগ্রা`, assumed: 'প্রতি ট্যাবলেট ৫০০ মিগ্রা ধরা হয়েছে',
+    sched: 'দৈনিক রুটিন', morning: 'সকাল', noon: 'দুপুর', night: 'রাত', asNeeded: 'প্রয়োজনে / সময় দেওয়া নেই', listen: 'পড়ে শোনাও',
     and: ' ও ', more: (m) => `এর বাইরে আরও ${m}টি বিষয় ডাক্তারকে জিজ্ঞেস করার আছে।`,
     source: 'ওষুধের লেবেল সারসংক্ষেপ থেকে (ইংরেজিতে):',
     groups: { NSAID: 'NSAID ধরনের ব্যথানাশক', PPI: 'গ্যাস্ট্রিকের PPI', H2: 'H2 গ্যাস্ট্রিক ওষুধ', STATIN: 'স্ট্যাটিন', ACEI: 'ACE ইনহিবিটর', ARB: 'ARB রক্তচাপের ওষুধ', CCB: 'ক্যালসিয়াম-চ্যানেল ব্লকার', SSRI: 'SSRI অবসাদের ওষুধ', BZD: 'বেঞ্জোডায়াজেপিন', OPIOID: 'ওপিওয়েড', SU: 'সালফোনাইলইউরিয়া ডায়াবেটিসের ওষুধ', ANTIHIST: 'অ্যান্টিহিস্টামিন', FLUOROQ: 'কুইনোলোন অ্যান্টিবায়োটিক', MACROLIDE: 'ম্যাক্রোলাইড অ্যান্টিবায়োটিক', TRICYC: 'ট্রাইসাইক্লিক অবসাদের ওষুধ' },
@@ -72,6 +88,10 @@ const T = {
       SAME_GENERIC: (l) => `${l} — সবগুলো কি আমার লাগবে, নাকি একটি?`,
       OVERLAP: (l) => `${l} একটির ভেতরে আরেকটি আছে — কোনটি রাখব?`,
       CLASS_DUP: (l) => `${l} একসাথে খাওয়ার কথা কি আপনি ভেবেছেন?`,
+      DOSE: (l) => `${l} মিলিয়ে আমার মোট প্যারাসিটামল কি নিরাপদ?`,
+      PREGNANCY: (l) => `গর্ভাবস্থায় ${l} কি নিরাপদ?`,
+      ELDER_NSAID: (l) => `এই বয়সে ${l} নিরাপদ কি, নাকি নরম বিকল্প আছে?`,
+      ELDER_BZD: (l) => `এই বয়সে ${l} কি এখনো সঠিক পছন্দ?`,
       SAME_BRAND: (l) => `${l} দুটি প্রেসক্রিপশনে আছে — একটি কি পুনরাবৃত্তি?`,
       INTERACTION: (a, b) => `${a} ও ${b} একসাথে খাওয়া কি নিরাপদ?`,
     },
@@ -88,6 +108,7 @@ let rxs = []; // [{doctor, text}]
 const t = () => T[lang];
 
 function applyLang() {
+  $('#listen').textContent = '🔊 ' + t().listen; $('#lblAge').textContent = t().age; $('#lblPreg').textContent = t().preg; $('#lblPatient').textContent = t().patient;
   document.documentElement.lang = lang;
   document.body.classList.toggle('bn', lang === 'bn');
   document.querySelectorAll('[data-i18n]').forEach((el) => { const v = t()[el.dataset.i18n]; if (typeof v === 'string') el.innerHTML = v; });
@@ -144,7 +165,8 @@ function update() {
   const total = prescriptions.reduce((n, p) => n + p.items.length, 0);
   const res = $('#result');
   if (total < 2) { res.hidden = true; return; }
-  const out = reconcile(index, prescriptions);
+  const patient = { age: +$('#age').value || 0, pregnant: $('#preg').checked };
+  const out = reconcile(index, prescriptions, patient);
   res.hidden = false;
   const nHigh = out.counts.high, nMed = out.counts.medium;
   const [big, head, body] = nHigh ? t().verdictHigh(nHigh) : nMed ? t().verdictMed(nMed) : t().verdictOk();
@@ -164,13 +186,21 @@ function update() {
     const snippet = f.snippet ? `<q>${t().source} ${esc(f.snippet)}</q>` : '';
     let body;
     if (f.type === 'INTERACTION') { const [sa, sb] = sideNames(f); body = tpl(bold(sa), bold(sb)); }
-    else { const g = f.type === 'CLASS_DUP' ? esc(t().groups[f.group] || f.group) : esc(f.generic || ''); body = tpl(bold(all), g); }
+    else { const g = f.type === 'CLASS_DUP' ? esc(t().groups[f.group] || f.group) : esc(f.generic || ''); body = tpl(bold(all), g, f); }
     return `<article class="f ${f.level}" style="animation-delay:${k * 40}ms"><div class="t"><span class="pill ${f.level === 'high' ? '' : 'm'}">${esc(sev)}</span><b>${esc(title)}</b></div>
       <div class="chips">${chips(all)}</div><p>${body}</p>${snippet}</article>`;
   }).join('') : '';
 
   $('#merged').innerHTML = out.merged.map((r) => `<div class="m-row ${r.flagged ? 'flag' : ''}"><b>${esc(r.generic)}</b><small>${r.brands.reduce((s, b) => s + b.rx.length, 0)}×</small>
     <div class="brands">${r.brands.map((b) => `<span>${esc(b.name)}${b.strength ? ' ' + esc(b.strength) : ''}</span>`).join('')}</div></div>`).join('');
+
+  const m = out.meter;
+  $('#meter').innerHTML = m ? `<div class="meter ${m.over ? 'over' : m.near ? 'near' : ''}"><div class="mh"><b>${t().meterT}</b><span>${t().meterOf(m.total, m.limit)}</span></div>
+    <div class="bar"><i style="width:${m.pct}%"></i></div>
+    <div class="mrows">${m.rows.map((r) => `<span>${esc(r.name)} <em>${r.perDay}×${r.unit}${r.assumed ? '*' : ''}</em></span>`).join('')}</div>${m.rows.some((r) => r.assumed) ? `<small>* ${t().assumed}</small>` : ''}</div>` : '';
+
+  const sc = out.schedule, cols = [['☀', t().morning], ['◐', t().noon], ['☾', t().night]];
+  $('#sched').innerHTML = sc.slots.some((x) => x.length) ? `<h4>${t().sched}</h4><div class="tt">${cols.map(([ic, nm], k) => `<div><div class="th"><span>${ic}</span>${nm}</div>${sc.slots[k].map((x) => `<p>${esc(x.name)}${x.n > 1 ? ' ×' + x.n : ''}</p>`).join('') || '<p class="none">—</p>'}</div>`).join('')}</div>${sc.asNeeded.length ? `<small>${t().asNeeded}: ${sc.asNeeded.map((x) => esc(x.display)).join(', ')}</small>` : ''}` : '';
 
   $('#unknown').innerHTML = out.unknown.length ? `<div class="unk">${t().unknownT} ${out.unknown.map((u) => `<b>${esc(u.raw)}</b>`).join(', ')}</div>` : '';
 
@@ -183,6 +213,15 @@ function update() {
   $('#docq').innerHTML = qs.length ? `<h4>${t().dq}</h4><ul>${qs.join('')}</ul>` : '';
   $('#docq').hidden = !qs.length;
 }
+
+function readAloud() {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const txt = [$('#verdict h3')?.textContent, ...[...document.querySelectorAll('#findings article')].map((a) => a.querySelector('b')?.textContent + '. ' + a.querySelector('p')?.textContent)].filter(Boolean).join('. ');
+  const u = new SpeechSynthesisUtterance(txt); u.lang = lang === 'bn' ? 'bn-BD' : 'en-GB'; speechSynthesis.speak(u);
+}
+$('#listen').onclick = readAloud;
+$('#age').oninput = update; $('#preg').onchange = update;
 
 // ---- photo scan (Gemini, from the browser, using the user's own key) ----
 async function downscale(file, max = 1600) {

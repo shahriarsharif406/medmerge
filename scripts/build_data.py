@@ -41,13 +41,15 @@ for gid, cname in db.execute("select tg.generic_id, t.therapitic_name from thera
         if re.search(rx, cname, re.I):
             cls_of.setdefault(gid, set()).add(g)
 
+preg = {pid: pname for pid, pname in db.execute("select pregnancy_id, pregnancy_name from pregnancy_category")}
 generics = {}
-for gid, name, inter in db.execute("select generic_id, generic_name, interaction from generic"):
+for gid, name, inter, pc in db.execute("select generic_id, generic_name, interaction, pregnancy_category_id from generic"):
     generics[gid] = {
         "n": name.strip(),
         "k": keys_of(name),
         "g": sorted(cls_of.get(gid, [])),
         "i": (inter or "").strip(),
+        "p": preg.get(pc, "") if preg.get(pc, "") != "Not Classified" else "",
     }
 companies = {cid: n for cid, n, _ in db.execute("select company_id, company_name, company_order from company_name")}
 brands = {}

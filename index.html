@@ -47,6 +47,7 @@
         <button class="btn ghost" id="clearAll" data-i18n="clear">Clear</button>
       </div>
     </div>
+    <div class="patient"><b id="lblPatient">About the patient</b><label><span id="lblAge">Age</span> <input id="age" type="number" min="0" max="120" placeholder="—"></label><label class="ck"><input id="preg" type="checkbox"> <span id="lblPreg">Pregnant</span></label></div>
     <p class="hint" data-i18n="hint">One medicine per line. Brand or generic name, strength optional. Example: <code>Tab. Napa 500 mg 1+1+1</code></p>
     <div class="rx-lane" id="lane"></div>
     <p class="status" id="scanStatus" role="status"></p>
@@ -54,6 +55,7 @@
 
   <section class="result" id="result" hidden>
     <div class="verdict" id="verdict"></div>
+    <div id="meter"></div>
     <div class="cols">
       <div>
         <h2 data-i18n="step2">2 · What needs a second look</h2>
@@ -62,9 +64,10 @@
       <div>
         <h2 data-i18n="step3">3 · Your merged list</h2>
         <div id="merged"></div>
+        <div id="sched" class="sched"></div>
         <div id="unknown"></div>
         <div class="doc-q" id="docq"></div>
-        <button class="btn solid" id="print" data-i18n="print">Save / print this list</button>
+        <button class="btn" id="listen">Read aloud</button> <button class="btn solid" id="print" data-i18n="print">Save / print this list</button>
       </div>
     </div>
   </section>

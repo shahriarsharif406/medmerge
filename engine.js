@@ -146,7 +146,7 @@ function fromBrand(index, base, key, p, status) {
     form: entry[1], pickedStrength: entry[2], company: entry[3],
     strengthsAvailable: [...new Set(all.map((e) => e[2]).filter(Boolean))].slice(0, 6),
     generic: shortGeneric(data.generics[gid].n), keys: data.generics[gid].k, groups: data.generics[gid].g,
-    text: data.generics[gid].i, systemic: !TOPICAL.test(entry[1] + ' ' + data.generics[gid].n),
+    preg: data.generics[gid].p, text: data.generics[gid].i, systemic: !TOPICAL.test(entry[1] + ' ' + data.generics[gid].n),
   };
 }
 
@@ -157,7 +157,7 @@ function fromGeneric(index, base, gids, p) {
   return {
     ...base, status: 'exact', kind: 'generic', display: shortGeneric(g.n), brand: null, gid, gids, ambiguous: false,
     form: '', pickedStrength: '', company: '', strengthsAvailable: [],
-    generic: shortGeneric(g.n), keys: g.k, groups: g.g, text: g.i, systemic: !TOPICAL.test(g.n),
+    generic: shortGeneric(g.n), keys: g.k, groups: g.g, preg: g.p, text: g.i, systemic: !TOPICAL.test(g.n),
   };
 }
 
@@ -207,7 +207,52 @@ function interactionBetween(index, a, b) {
   return null;
 }
 
-export function reconcile(index, prescriptions) {
+// "1+0+1" (morning+noon+night, Bangladeshi style) or bd/tds/od -> units per slot
+export function parseFreq(f) {
+  if (!f) return null;
+  const m = String(f).match(/^(\d(?:\.\d)?)[+\-](\d(?:\.\d)?)[+\-](\d(?:\.\d)?)/);
+  if (m) return [+m[1], +m[2], +m[3]];
+  const w = String(f).toLowerCase();
+  if (/\bod\b|once/.test(w)) return [0, 0, 1];
+  if (/\bbd\b|twice/.test(w)) return [1, 0, 1];
+  if (/\btds\b|thrice/.test(w)) return [1, 1, 1];
+  return null;
+}
+
+const mgOf = (strength) => { const m = String(strength || '').toLowerCase().match(/(\d+(?:\.\d+)?)\s*mg/); return m ? +m[1] : null; };
+
+// Daily total of paracetamol across every prescription (the classic hidden overdose)
+export function paracetamolMeter(items, age) {
+  const rows = [];
+  let total = 0, unknown = [];
+  for (const it of items) {
+    if (!it.kind || !it.keys.includes('paracetamol') || !it.systemic) continue;
+    const slots = parseFreq(it.freq);
+    if (!slots) { unknown.push(it.display); continue; }
+    const perDay = slots.reduce((a, b) => a + b, 0);
+    let mg = mgOf(it.strength) || mgOf(it.pickedStrength);
+    let assumed = false;
+    if (!mg) { mg = 500; assumed = true; }
+    rows.push({ name: it.display, mg: perDay * mg, perDay, unit: mg, assumed });
+    total += perDay * mg;
+  }
+  if (!rows.length) return null;
+  const limit = age && age >= 65 ? 3000 : 4000;
+  return { rows, total, limit, pct: Math.min(100, Math.round((total / limit) * 100)), unknown, over: total >= limit, near: total >= limit * 0.75 };
+}
+
+export function timetable(items) {
+  const slots = [[], [], []], asNeeded = [];
+  for (const it of items) {
+    if (!it.kind || !it.systemic) continue;
+    const f = parseFreq(it.freq);
+    if (!f) { asNeeded.push(it); continue; }
+    f.forEach((n, k) => { if (n) slots[k].push({ idx: it.idx, name: it.display, n }); });
+  }
+  return { slots, asNeeded };
+}
+
+export function reconcile(index, prescriptions, patient = {}) {
   const items = [];
   prescriptions.forEach((rx, ri) => {
     (rx.items || []).forEach((line) => {
@@ -244,12 +289,22 @@ export function reconcile(index, prescriptions) {
       if (hit) push({ type: 'INTERACTION', level: hit.sev === 'severe' ? 'high' : 'medium', items: [A.idx, B.idx], snippet: hit.snippet, severity: hit.sev });
     }
   }
+  // patient-specific checks (age, pregnancy) -- one card per medicine
+  const age = +patient.age || 0;
+  for (const it of known) {
+    if (patient.pregnant && /(^|\+)(D|X)(\+|$)/.test(it.preg || '')) {
+      findings.push({ type: 'PREGNANCY', level: 'high', items: [it.idx], cat: it.preg, generic: it.generic, sa: sigOf(it), sb: '' });
+    }
+    if (age >= 65 && it.groups.includes('NSAID')) findings.push({ type: 'ELDER_NSAID', level: 'medium', items: [it.idx], generic: it.generic, sa: sigOf(it), sb: '' });
+    if (age >= 65 && it.groups.includes('BZD')) findings.push({ type: 'ELDER_BZD', level: 'medium', items: [it.idx], generic: it.generic, sa: sigOf(it), sb: '' });
+  }
   // one card per problem, not one per pair: Seclo + Losectil + Maxpro are listed together
   const grouped = new Map();
   for (const f of findings) {
     const sigs = [f.sa, f.sb].sort();
     const key = f.type === 'SAME_GENERIC' ? 'SG:' + f.sa : f.type === 'SAME_BRAND' ? 'SB:' + items[f.items[0]].brand
-      : f.type === 'CLASS_DUP' ? 'CD:' + f.group : f.type + ':' + sigs.join('#');
+      : f.type === 'CLASS_DUP' ? 'CD:' + f.group
+      : ['PREGNANCY', 'ELDER_NSAID', 'ELDER_BZD'].includes(f.type) ? f.type + ':' + f.items[0] : f.type + ':' + sigs.join('#');
     const g = grouped.get(key);
     if (!g) { grouped.set(key, { ...f, sigs, items: [...f.items] }); continue; }
     for (const i of f.items) if (!g.items.includes(i)) g.items.push(i);
@@ -263,6 +318,10 @@ export function reconcile(index, prescriptions) {
       if (g.type === 'INTERACTION') { const iA = items[g.sides[0][0]]; g.sidesGeneric = g.sides.map((sd) => items[sd[0]].generic); }
     }
     findings.push(g);
+  }
+  const meter = paracetamolMeter(items, age);
+  if (meter && meter.over) {
+    findings.unshift({ type: 'DOSE', level: 'high', items: items.filter((i) => i.kind && i.keys.includes('paracetamol') && parseFreq(i.freq)).map((i) => i.idx), total: meter.total, limit: meter.limit });
   }
   const rank = { high: 0, medium: 1, info: 2 };
   findings.sort((p, q) => rank[p.level] - rank[q.level]);
@@ -284,7 +343,7 @@ export function reconcile(index, prescriptions) {
   const unknown = items.filter((i) => !i.kind);
   const level = findings.some((f) => f.level === 'high') ? 'high' : findings.length ? 'medium' : 'ok';
   return {
-    items, findings, merged: [...rows.values()], unknown, level,
+    items, findings, merged: [...rows.values()], unknown, level, meter, schedule: timetable(items),
     counts: { medicines: items.length, distinct: rows.size, high: findings.filter((f) => f.level === 'high').length, medium: findings.filter((f) => f.level === 'medium').length },
   };
 }

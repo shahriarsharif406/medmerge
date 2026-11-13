@@ -46,3 +46,10 @@ python3 scripts/build_data.py medicine.db   # rebuild data/medmerge-data.json
 ## Credits
 Brand/label data: [wsayan/medicinedb](https://github.com/wsayan/medicinedb) (MIT). See `NOTICE.md`.
 Code: MIT, see `LICENSE`. Built by Shahariar / Anvia Labs.
+
+
+## Also in this version
+- **Paracetamol meter**: adds up every paracetamol-containing brand across all prescriptions (1+1+1 style schedules) and shows the day's total against the 4,000 mg limit (3,000 mg at 65+).
+- **Patient checks**: enter an age and a pregnancy flag to get label-based pregnancy-category (D/X) and 65+ NSAID/benzodiazepine cautions.
+- **Daily timetable**: morning / noon / night grid built from the merged list.
+- **Read aloud** in Bangla or English for patients who cannot read the screen easily.
