@@ -30,7 +30,7 @@ const T = {
     ELDER_NSAID: ['Use with care at 65+', (l) => `${l} is an NSAID painkiller. In older adults it raises the risk of stomach bleeding and kidney strain.`],
     ELDER_BZD: ['Use with care at 65+', (l) => `${l} is a benzodiazepine. In older adults it raises the risk of drowsiness and falls.`],
     patient: 'About the patient', age: 'Age', preg: 'Pregnant', meterT: 'Paracetamol today', meterOf: (a, b) => `${a} of ${b} mg`, assumed: 'assumed 500 mg per tablet',
-    sched: 'Daily timetable', morning: 'Morning', noon: 'Noon', night: 'Night', asNeeded: 'As needed / no schedule', listen: 'Read aloud',
+    sched: 'Daily timetable', morning: 'Morning', noon: 'Noon', night: 'Night', asNeeded: 'As needed / no schedule', listen: 'Read aloud', share: 'Copy for WhatsApp', copied: 'Copied',
     and: ' and ', more: (m) => `Plus ${m} more to ask your doctor about.`,
     source: 'From the drug label summary:',
     groups: { NSAID: 'painkillers of the NSAID type', PPI: 'acid-reducing PPIs', H2: 'H2 acid reducers', STATIN: 'statins', ACEI: 'ACE inhibitors', ARB: 'ARB blood-pressure medicines', CCB: 'calcium-channel blockers', SSRI: 'SSRI antidepressants', BZD: 'benzodiazepines', OPIOID: 'opioids', SU: 'sulfonylurea diabetes medicines', ANTIHIST: 'antihistamines', FLUOROQ: 'quinolone antibiotics', MACROLIDE: 'macrolide antibiotics', TRICYC: 'tricyclic antidepressants' },
@@ -78,7 +78,7 @@ const T = {
     ELDER_NSAID: ['৬৫+ বয়সে সতর্কতা', (l) => `${l} একটি NSAID ব্যথানাশক। বয়স্কদের পাকস্থলীতে রক্তক্ষরণ ও কিডনির ঝুঁকি বাড়ায়।`],
     ELDER_BZD: ['৬৫+ বয়সে সতর্কতা', (l) => `${l} একটি বেনজোডায়াজেপিন। বয়স্কদের ঝিমুনি ও পড়ে যাওয়ার ঝুঁকি বাড়ায়।`],
     patient: 'রোগীর তথ্য', age: 'বয়স', preg: 'গর্ভবতী', meterT: 'আজকের প্যারাসিটামল', meterOf: (a, b) => `${b} এর মধ্যে ${a} মিগ্রা`, assumed: 'প্রতি ট্যাবলেট ৫০০ মিগ্রা ধরা হয়েছে',
-    sched: 'দৈনিক রুটিন', morning: 'সকাল', noon: 'দুপুর', night: 'রাত', asNeeded: 'প্রয়োজনে / সময় দেওয়া নেই', listen: 'পড়ে শোনাও',
+    sched: 'দৈনিক রুটিন', morning: 'সকাল', noon: 'দুপুর', night: 'রাত', asNeeded: 'প্রয়োজনে / সময় দেওয়া নেই', listen: 'পড়ে শোনাও', share: 'হোয়াটসঅ্যাপের জন্য কপি', copied: 'কপি হয়েছে',
     and: ' ও ', more: (m) => `এর বাইরে আরও ${m}টি বিষয় ডাক্তারকে জিজ্ঞেস করার আছে।`,
     source: 'ওষুধের লেবেল সারসংক্ষেপ থেকে (ইংরেজিতে):',
     groups: { NSAID: 'NSAID ধরনের ব্যথানাশক', PPI: 'গ্যাস্ট্রিকের PPI', H2: 'H2 গ্যাস্ট্রিক ওষুধ', STATIN: 'স্ট্যাটিন', ACEI: 'ACE ইনহিবিটর', ARB: 'ARB রক্তচাপের ওষুধ', CCB: 'ক্যালসিয়াম-চ্যানেল ব্লকার', SSRI: 'SSRI অবসাদের ওষুধ', BZD: 'বেঞ্জোডায়াজেপিন', OPIOID: 'ওপিওয়েড', SU: 'সালফোনাইলইউরিয়া ডায়াবেটিসের ওষুধ', ANTIHIST: 'অ্যান্টিহিস্টামিন', FLUOROQ: 'কুইনোলোন অ্যান্টিবায়োটিক', MACROLIDE: 'ম্যাক্রোলাইড অ্যান্টিবায়োটিক', TRICYC: 'ট্রাইসাইক্লিক অবসাদের ওষুধ' },
@@ -108,7 +108,7 @@ let rxs = []; // [{doctor, text}]
 const t = () => T[lang];
 
 function applyLang() {
-  $('#listen').textContent = '🔊 ' + t().listen; $('#lblAge').textContent = t().age; $('#lblPreg').textContent = t().preg; $('#lblPatient').textContent = t().patient;
+  $('#listen').textContent = '🔊 ' + t().listen; $('#share').textContent = '📤 ' + t().share; $('#lblAge').textContent = t().age; $('#lblPreg').textContent = t().preg; $('#lblPatient').textContent = t().patient;
   document.documentElement.lang = lang;
   document.body.classList.toggle('bn', lang === 'bn');
   document.querySelectorAll('[data-i18n]').forEach((el) => { const v = t()[el.dataset.i18n]; if (typeof v === 'string') el.innerHTML = v; });
@@ -220,6 +220,16 @@ function readAloud() {
   const txt = [$('#verdict h3')?.textContent, ...[...document.querySelectorAll('#findings article')].map((a) => a.querySelector('b')?.textContent + '. ' + a.querySelector('p')?.textContent)].filter(Boolean).join('. ');
   const u = new SpeechSynthesisUtterance(txt); u.lang = lang === 'bn' ? 'bn-BD' : 'en-GB'; speechSynthesis.speak(u);
 }
+$('#share').onclick = async () => {
+  const lines = [`MedMerge — ${$('#verdict h3')?.textContent || ''}`, ''];
+  document.querySelectorAll('#findings article').forEach((a) => lines.push('• ' + a.querySelector('b').textContent + ': ' + a.querySelector('p').textContent));
+  lines.push('', '— ' + t().sched.toUpperCase() + ' —');
+  document.querySelectorAll('.tt > div').forEach((c) => lines.push(c.querySelector('.th').textContent + ': ' + [...c.querySelectorAll('p:not(.none)')].map((p) => p.textContent).join(', ')));
+  lines.push('', 'Not medical advice. Show this to your doctor or pharmacist. https://shahriarsharif406.github.io/medmerge/');
+  const txt = lines.join('\n');
+  try { await navigator.clipboard.writeText(txt); $('#share').textContent = '✓ ' + t().copied; } catch { window.prompt('Copy', txt); }
+  setTimeout(() => { $('#share').textContent = '📤 ' + t().share; }, 2000);
+};
 $('#listen').onclick = readAloud;
 $('#age').oninput = update; $('#preg').onchange = update;
 
